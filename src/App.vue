@@ -1,25 +1,31 @@
 <template>
-  <div id="app">
+  <div id="content">
     <router-view/>
+    <svg-icon></svg-icon>
   </div>
 </template>
 
 <script>
+
+import svgIcon from "./components/common/Svg"
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    svgIcon
+  }
 }
 </script>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin: 0 0;
-  padding: 0 0;
-  height: 100%;
-  width: 100%;
+<style lang="scss">
+@import "./style/common";
+
+.router-fade-enter-active,
+.router-fade-leave-active {
+  transition: opacity 0.3s;
+}
+.router-fade-enter,
+.router-fade-leave-active {
+  opacity: 0;
 }
 </style>

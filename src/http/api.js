@@ -144,7 +144,7 @@ export default function $axios(options) {
         //请求处理
         instance(options)
             .then((res) => {
-                resolve(res)
+                resolve(JSON.parse(res))
                 return false
             })
             .catch((error) => {
