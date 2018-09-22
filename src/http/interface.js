@@ -1,7 +1,7 @@
 import axios from './api'
 
-
-export const getHotCity = params => {
+// 获取热门城市
+export const hotCity = params => {
     return axios({
         url: '/apis/v1/cities',
         method: 'get',
@@ -9,24 +9,26 @@ export const getHotCity = params => {
     })
 }
 
-export const mock = params => {
+// 获取定位城市
+export const guessCity = params => {
     return axios({
-        url: '/mock',
+        url: '/apis/v1/cities',
         method: 'get',
-        params
+        params: { type: 'guess' }
     })
 }
 
-export const upload = data => {
+// 获取城市列表
+export const groupCity = data => {
     return axios({
-        url: '/upload',
-        method: 'post',
-        data
+        url: '/apis/v1/cities',
+        method: 'get',
+        params: { type: 'group' }
     })
 }
 
 export default {
-    getHotCity,
-    mock,
-    upload
+    hotCity,
+    guessCity,
+    groupCity
 }

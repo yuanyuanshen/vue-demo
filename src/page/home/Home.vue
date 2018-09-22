@@ -8,8 +8,8 @@
                 <span>当前定位城市：</span>
                 <span>定位不准时，请在城市列表中选择</span>
             </div>
-            <router-link :to="'/city/' + 1" class="guess_city">
-                <span>{{guessCity}}AAA</span>
+            <router-link :to="'/city/' + guessCityId" class="guess_city">
+                <span>{{guessCity.name}}</span>
                 <svg class="arrow_right">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
                 </svg>
@@ -23,7 +23,20 @@
                 </router-link>
             </ul>
         </section>
-        <section class="group_city_container"></section>
+        <section class="group_city_container">
+            <ul class="letter_classify">
+                <li class="letter_classify_li" v-for="(item,key,index) in sortgroupcity" :key="item">
+                    <h4 class="group_city_title">{{key}}
+                        <span v-if="index == 0">（按字母排序）</span>
+                    </h4>
+                    <ul class="group_city_list clear">
+                        <router-link tag="li" v-for="city in item" :key="city.id" :to="'/city/' + city.id" class="ellipsis" :title="city.name">
+                            {{city.name}}
+                        </router-link>
+                    </ul>
+                </li>
+            </ul>
+        </section>
     </div>
 </template>
 
@@ -35,14 +48,26 @@ export default {
     data() {
         return {
             hotCity: [], // 热门城市列表
+            guessCity: {}, // 当前城市定位
         }
     },
     created() { },
 
     mounted() {
         // 获取热门城市
-        this.$api.getHotCity().then(res => {
+        this.$api.hotCity().then(res => {
             this.hotCity = res
+        })
+
+        // 获取当前城市定位
+        this.$api.guessCity().then(res => {
+            this.guessCity = res
+            this.guessCityId = res.id
+        })
+
+        // 获取城市列表
+        this.$api.groupCity().then(res => {
+            this.groupCity = res
         })
     },
 
@@ -57,12 +82,21 @@ export default {
     },
 
     computed: {
-
+        //将获取的数据按照A-Z字母开头排序
+        sortgroupcity() {
+            let sortobj = {};
+            for (let i = 65; i <= 90; i++) {
+                if (this.groupCity[String.fromCharCode(i)]) {
+                    sortobj[String.fromCharCode(i)] = this.groupCity[String.fromCharCode(i)];
+                }
+            }
+            return sortobj
+        }
     }
 }
 </script>
 
-<style lang="scss" type="text/css">
+<style lang="scss" scoped>
 @import "../../style/mixin";
 .home {
   height: 100%;
@@ -113,6 +147,7 @@ export default {
 #hot_city_container {
   background-color: #fff;
   margin-bottom: 0.4rem;
+  border-top: 2px solid $bc;
   .hot_city_title {
     padding: 0 0.45em;
     @include font(0.55rem, 1.4rem);
@@ -130,6 +165,37 @@ export default {
     }
     li:nth-of-type(4n) {
       border-right: none;
+    }
+  }
+}
+.group_city_container {
+  .letter_classify {
+    margin-bottom: 0.4rem;
+    .letter_classify_li {
+      border-top: 2px solid $bc;
+      background-color: #fff;
+      margin-top: 0.3rem;
+    }
+    .group_city_title {
+      padding: 0 0.45em;
+      color: #666;
+      @include font(0.45rem, 1.4rem);
+      border-bottom: 1px solid $bc;
+    }
+    .group_city_list {
+      @include font(0.55rem, 1.4rem);
+      li {
+        float: left;
+        text-align: center;
+        color: $blue;
+        border-bottom: 0.025rem solid $bc;
+        border-right: 0.025rem solid $bc;
+        @include wh(25%, 1.4rem);
+        @include sc(0.55rem, #666);
+      }
+      li:nth-of-type(4n) {
+        border-right: none;
+      }
     }
   }
 }
