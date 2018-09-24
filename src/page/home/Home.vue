@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <head-top signin-up='home'>
-            <span slot="logo" class="head_logo">ele.me</span>
+            <span slot="logo" class="head_logo" @click="reload">ele.me</span>
         </head-top>
         <nav class="city_nav">
             <div class="city_tip">
@@ -25,7 +25,7 @@
         </section>
         <section class="group_city_container">
             <ul class="letter_classify">
-                <li class="letter_classify_li" v-for="(item,key,index) in sortgroupcity" :key="item">
+                <li class="letter_classify_li" v-for="(item,key,index) in sortgroupcity" :key="index">
                     <h4 class="group_city_title">{{key}}
                         <span v-if="index == 0">（按字母排序）</span>
                     </h4>
@@ -49,6 +49,8 @@ export default {
         return {
             hotCity: [], // 热门城市列表
             guessCity: {}, // 当前城市定位
+            guessCityId: '', // 当前城市id
+            groupCity: {} // 城市列表
         }
     },
     created() { },
@@ -72,8 +74,9 @@ export default {
     },
 
     methods: {
-        getHotCity() {
-
+        //点击图标刷新页面
+        reload() {
+            window.location.reload();
         }
     },
 
