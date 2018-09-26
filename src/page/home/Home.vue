@@ -137,7 +137,7 @@ export default {
     padding: 0 0.45rem;
     border-top: 1px solid $bc;
     border-bottom: 2px solid $bc;
-    @include font(0.75rem, 1.8rem);
+    @include font(0.65rem, 1.8rem);
     span:nth-of-type(1) {
       color: $blue;
     }

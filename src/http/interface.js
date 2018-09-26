@@ -47,14 +47,35 @@ export const getcaptchas = params => {
 }
 
 // 账号密码登录
-export const accountLogin = params => {
+export const accountLogin = data => {
     return axios({
         url: '/apis/v2/login',
         method: 'post',
-        params
+        data
     })
 }
 
+// 根据城市id获取城市名称
+export const currentcity = params => {
+  return axios({
+      url: `/apis/v1/cities/${params}`,
+      method: 'get',
+      params
+  })
+}
+
+// 获取城市搜索结果
+export const searchplace = (cityid, value) => {
+  return axios({
+      url: '/apis/v1/pois',
+      method: 'get',
+      params: {
+        type: 'search',
+        city_id: cityid,
+        keyword: value
+      }
+  })
+}
 
 export default {
     hotCity,
@@ -62,5 +83,7 @@ export default {
     groupCity,
     getUser,
     getcaptchas,
-    accountLogin
+    accountLogin,
+    currentcity,
+    searchplace
 }
