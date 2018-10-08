@@ -60,7 +60,6 @@ export const currentcity = params => {
   return axios({
       url: `/apis/v1/cities/${params}`,
       method: 'get',
-      params
   })
 }
 
@@ -77,6 +76,14 @@ export const searchplace = (cityid, value) => {
   })
 }
 
+// 获取msite页面地址信息
+export const msiteAddress = (geohash) => {
+  return axios({
+      url: `/apis/v2/pois/${geohash}`,
+      method: 'get',
+  })
+}
+
 export default {
     hotCity,
     guessCity,
@@ -85,5 +92,6 @@ export default {
     getcaptchas,
     accountLogin,
     currentcity,
-    searchplace
+    searchplace,
+    msiteAddress
 }

@@ -87,6 +87,7 @@ export default {
     // 获取验证吗，线上环境使用固定的图片，生产环境使用真实的验证码
     async getCaptchaCode() {
       let res = await this.$api.getcaptchas();
+      console.log(res)
       this.captchaCodeImg = res.code;
     },
     // 登录
