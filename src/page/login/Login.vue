@@ -3,18 +3,21 @@
     <head-top :head-title="loginWay? '登录':'密码登录'" goBack="true">
       <!-- <div slot="changeLogin" class="change_login" @click="changeLoginWay">{{loginWay? "密码登录":"短信登录"}}</div> -->
     </head-top>
-    <!-- <form class="loginForm" v-if="loginWay">
-            <section class="input_container phone_number">
-                <input type="text" placeholder="账号密码随便输入" name="phone" maxlength="11" v-model="phoneNumber">
-                <button @click.prevent="getVerifyCode" :class="{right_phone_number:rightPhoneNumber}" v-show="!computedTime">获取验证码</button>
-                <button @click.prevent v-show="computedTime">已发送({{computedTime}}s)</button>
-            </section>
-            <section class="input_container">
-                <input type="text" placeholder="验证码" name="mobileCode" maxlength="6" v-model="mobileCode">
-            </section>
-        </form> -->
-    <!-- <form class="loginForm" v-else> -->
-    <form class="loginForm">
+    <div class="switch">
+      <el-switch style="display: block" v-model="loginWay" active-color="#13ce66" inactive-color="#ff4949" active-text="短信登录/注册" inactive-text="账号登录/注册">
+      </el-switch>
+    </div>
+    <form class="loginForm" v-if="loginWay">
+      <section class="input_container phone_number">
+        <input type="text" placeholder="账号密码随便输入" name="phone" maxlength="11" v-model="phoneNumber">
+        <button @click.prevent="getVerifyCode" :class="{right_phone_number:rightPhoneNumber}" v-show="!computedTime">获取验证码</button>
+        <button @click.prevent v-show="computedTime">已发送({{computedTime}}s)</button>
+      </section>
+      <section class="input_container">
+        <input type="text" placeholder="验证码" name="mobileCode" maxlength="6" v-model="mobileCode">
+      </section>
+    </form>
+    <form class="loginForm" v-else>
       <section class="input_container">
         <input type="text" placeholder="账号" v-model.lazy="userAccount">
       </section>
@@ -53,7 +56,7 @@
 
 import headTop from '../../components/header/Header'
 import alertTip from '../../components/common/alertTip'
-import {mapState, mapMutations} from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   data() {
@@ -283,6 +286,20 @@ export default {
   float: right;
   @include sc(0.6rem, #3b95e9);
   margin-right: 0.3rem;
+}
+.switch {
+  height: 30px;
+  line-height: 30px;
+  margin-top: 20px;
+  text-align: center;
+}
+span.el-switch__label.el-switch__label--left.is-active span {
+  font-size: 0.55rem !important;
+  color: blue !important;
+}
+span.el-switch__label span {
+  font-size: 0.55rem !important;
+  color: #666 !important;
 }
 </style>
 
