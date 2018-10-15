@@ -1,6 +1,6 @@
 <template>
   <div class="loginContainer">
-    <head-top :head-title="loginWay? '登录':'密码登录'" goBack="true">
+    <head-top :head-title="loginWay? '短信登录':'密码登录'" goBack="true">
       <!-- <div slot="changeLogin" class="change_login" @click="changeLoginWay">{{loginWay? "密码登录":"短信登录"}}</div> -->
     </head-top>
     <div class="switch">
@@ -70,6 +70,9 @@ export default {
       codeNumber: null, //验证码
       showAlert: false, //显示提示组件
       alertText: null, //提示的内容
+      phoneNumber: null,
+      computedTime: 0, //倒数记时
+      mobileCode: null, //短信验证码
     }
   },
 
@@ -96,17 +99,17 @@ export default {
     // 登录
     async mobileLogin() {
       if (this.loginWay) {
-        // if (!this.rightPhoneNumber) {
-        //     this.showAlert = true;
-        //     this.alertText = '手机号码不正确';
-        //     return
-        // } else if (!(/^\d{6}$/gi.test(this.mobileCode))) {
-        //     this.showAlert = true;
-        //     this.alertText = '短信验证码不正确';
-        //     return
-        // }
-        // //手机号登录
-        // this.userInfo = await sendLogin(this.mobileCode, this.phoneNumber, this.validate_token);
+        if (!this.rightPhoneNumber) {
+          this.showAlert = true;
+          this.alertText = '手机号码不正确';
+          return
+        } else if (!(/^\d{6}$/gi.test(this.mobileCode))) {
+          this.showAlert = true;
+          this.alertText = '短信验证码不正确';
+          return
+        }
+        //手机号登录
+        this.userInfo = await sendLogin(this.mobileCode, this.phoneNumber, this.validate_token);
       } else {
         if (!this.userAccount) {
           this.showAlert = true;
@@ -138,12 +141,50 @@ export default {
         this.$router.go(-1);
       }
     },
+
     closeTip() {
       this.showAlert = false;
+    },
+
+    async getVerifyCode() {
+      if (this.rightPhoneNumber) {
+        this.computedTime = 30
+        this._toTimer = setInterval(() => {
+          this.computedTime--
+          if (this.computedTime == 0) {
+            clearInterval(this._toTimer)
+          }
+        },1000)
+        //判断用户是否存在
+        let exsis = await this.$api.checkExsis(this.phoneNumber, 'mobile');
+        if (exsis.message) {
+          this.showAlert = true;
+          this.alertText = exsis.message;
+          return
+        } else if (!exsis.is_exists) {
+          this.showAlert = true;
+          this.alertText = '您输入的手机号尚未绑定';
+          return
+        }
+        //发送短信验证码
+        let res = await mobileCode(this.phoneNumber);
+        if (res.message) {
+          this.showAlert = true;
+          this.alertText = res.message;
+          return
+        }
+        this.validate_token = res.validate_token;
+      }
     }
+
   },
 
-  computed: {},
+  computed: {
+    //判断手机号码
+    rightPhoneNumber: function () {
+      return /^1\d{10}$/gi.test(this.phoneNumber)
+    }
+  },
 
   components: {
     headTop,
@@ -152,16 +193,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../style/mixin";
-
-.loginContainer {
-  padding-top: 1.95rem;
-  p,
-  span,
-  input {
-    font-family: Helvetica Neue, Tahoma, Arial;
-  }
-}
 @import "../../style/mixin";
 
 .loginContainer {
@@ -292,14 +323,9 @@ export default {
   line-height: 30px;
   margin-top: 20px;
   text-align: center;
-}
-span.el-switch__label.el-switch__label--left.is-active span {
-  font-size: 0.55rem !important;
-  color: blue !important;
-}
-span.el-switch__label span {
-  font-size: 0.55rem !important;
-  color: #666 !important;
+  span {
+    font-size: 0.6rem;
+  }
 }
 </style>
 
