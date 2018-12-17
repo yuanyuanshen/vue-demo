@@ -55,6 +55,22 @@ npm run build
 
 #### 商家页mSite
 
+1. 食品分类列表需要引入swiper
+
+> 优化点：之前使用swiper.min.js 代码会报错，所以我安装 swiper的npm包
+
+```
+npm install swiper --save
+# 使用方法
+import Swiper from 'swiper';
+import 'swiper/dist/css/swiper.min.css';
+```
+*注意：安装版本"swiper": "^4.4.1",添加分页的代码有变化，请参考代码或者[swiper官网](https://www.swiper.com.cn/usage/index.html)*
+
+2. 附近商家列表
+
+
+
 
 
 

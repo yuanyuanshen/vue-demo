@@ -11,6 +11,31 @@
         <span class="title_text ellipsis">{{msiteTitle}}</span>
       </router-link>
     </head-top>
+    <nav class="msite_nav">
+      <div class="swiper-container" v-if="foodTypes.length">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide food_types_container" v-for="(item, index) in foodTypes" :key="index">
+            <router-link :to="{path: '/food', query: {geohash, title: foodItem.title, restaurant_category_id: getCategoryId(foodItem.link)}}" v-for="foodItem in item" :key="foodItem.id" class="link_to_food">
+              <figure>
+                <img :src="imgBaseUrl + foodItem.image_url">
+                <figcaption>{{foodItem.title}}</figcaption>
+              </figure>
+            </router-link>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      <img src="../../../src/images/fl.svg" class="fl_back animation_opactiy" v-else>
+    </nav>
+    <div class="shop_list_container">
+      <header class="shop_header">
+        <svg class="shop_icon">
+          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#shop"></use>
+        </svg>
+        <span class="shop_header_title">附近商家</span>
+      </header>
+      <shop-list v-if="hasGetData" :geohash="geohash"></shop-list>
+    </div>
     <foot-guide></foot-guide>
   </div>
 </template>
@@ -18,12 +43,18 @@
 import { mapMutations } from 'vuex'
 import headTop from '../../components/header/Header'
 import footGuide from '../../components/footer/footGuide'
+import shopList from '../../components/common/shoplist'
+import Swiper from 'swiper';
+import 'swiper/dist/css/swiper.min.css';
 
 export default {
   data() {
     return {
       geohash: '', // city页面传递过来的地址geohash
       msiteTitle: '请选择地址...', // msite页面头部标题
+      foodTypes: [], // 食品分类列表
+      imgBaseUrl: 'https://fuss10.elemecdn.com', //图片域名地址
+      hasGetData: false, //是否已经获取地理位置数据，成功之后再获取商铺列表信息
     }
   },
 
@@ -46,19 +77,52 @@ export default {
 
     // 记录当前经度纬度
     this.RECORD_ADDRESS(res);
-
+    this.hasGetData = true;
   },
 
-  mounted() { },
+  mounted() {
+    this.msiteFoodTypes()
+  },
 
-  components: { headTop, footGuide },
+  components: { headTop, footGuide, shopList },
 
   computed: {},
 
   methods: {
     ...mapMutations([
       'RECORD_ADDRESS', 'SAVE_GEOHASH'
-    ])
+    ]),
+
+    msiteFoodTypes() {
+      this.$api.msiteFoodTypes(this.geohash).then(res => {
+        let resLength = res.length;
+        let resArr = [...res]; // 返回一个新的数组
+        let foodArr = [];
+        for (let i = 0, j = 0; i < resLength; i += 8, j++) {
+          foodArr[j] = resArr.splice(0, 8);
+        }
+        this.foodTypes = foodArr;
+      }).finally(() => {
+        //初始化swiper
+        new Swiper('.swiper-container', {
+          // 如果需要分页器
+          pagination: {
+            el: '.swiper-pagination',
+          },
+          loop: true
+        });
+      })
+    },
+
+    // 解码url地址，求去restaurant_category_id值
+    getCategoryId(url) {
+      let urlData = decodeURIComponent(url.split('=')[1].replace('&target_name', ''));
+      if (/restaurant_category_id/gi.test(urlData)) {
+        return JSON.parse(urlData).restaurant_category_id.id
+      } else {
+        return ''
+      }
+    }
   },
 
   watch: {}
@@ -92,7 +156,7 @@ export default {
     @include wh(100%, auto);
     padding-bottom: 0.6rem;
     .swiper-pagination {
-      bottom: 0.2rem;
+      bottom: 0;
     }
   }
   .fl_back {

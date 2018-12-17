@@ -99,7 +99,7 @@ export const checkExsis = (checkNumber, type) => {
 // 获取短信验证码
 export const mobileCode = phone => {
   return axios({
-    url: '/apis//v4/mobile/verify_code/send',
+    url: '/apis/v4/mobile/verify_code/send',
     method: 'post',
     data: {
       mobile: phone,
@@ -108,6 +108,51 @@ export const mobileCode = phone => {
     }
   })
 }
+
+// 获取msite页面食品分类列表
+export const msiteFoodTypes = geohash => {
+  return axios({
+    url: '/apis/v2/index_entry',
+    method: 'get',
+    params: {
+      geohash: geohash,
+      group_type: '1',
+      'flags[]': 'F'
+    }
+  })
+}
+
+// 获取店铺列表
+export const shopList = (latitude, longitude, offset, restaurant_category_id = '', restaurant_category_ids = '', order_by = '', delivery_mode = '', support_ids = []) => {
+  
+  let supportStr = '';
+  support_ids.forEach(item => {
+    if (item.status) {
+      supportStr += '&support_ids[]=' + item.id;
+    }
+  });
+
+  let data = {
+    latitude,
+    longitude,
+    offset,
+    limit: '20',
+    'extras[]': 'activities',
+    keyword: '',
+    restaurant_category_id,
+    'restaurant_category_ids[]': restaurant_category_ids,
+    order_by,
+    'delivery_mode[]': delivery_mode + supportStr
+  };
+
+  return axios({
+    url: '/apis/shopping/restaurants',
+    method: 'get',
+    params: data
+  })
+}
+
+
 
 export default {
   hotCity,
@@ -120,5 +165,7 @@ export default {
   searchplace,
   msiteAddress,
   checkExsis,
-  mobileCode
+  mobileCode,
+  msiteFoodTypes,
+  shopList
 }
