@@ -1,7 +1,8 @@
 <template>
   <div class="shoplist_container">
     <ul v-load-more="loaderMore" v-if="shopListArr.length" type="1">
-      <router-link :to="{path: 'shop', query:{geohash, id: item.id}}" v-for="item in shopListArr" tag='li' :key="item.id" class="shop_li">
+      <router-link :to="{path: 'shop', query:{geohash, id: item.id}}" v-for="item in shopListArr" tag='li' :key="item.id"
+        class="shop_li">
         <section>
           <img :src="imgBaseUrl + item.image_path" class="shop_img">
         </section>
@@ -34,7 +35,8 @@
               {{item.piecewise_agent_fee.tips}}
             </p>
             <p class="distance_time">
-              <span v-if="Number(item.distance)">{{item.distance > 1000? (item.distance/1000).toFixed(2) + 'km': item.distance + 'm'}}
+              <span v-if="Number(item.distance)">{{item.distance > 1000? (item.distance/1000).toFixed(2) + 'km':
+                item.distance + 'm'}}
                 <span class="segmentation">/</span>
               </span>
               <span v-else>{{item.distance}}</span>
@@ -45,7 +47,7 @@
         </hgroup>
       </router-link>
     </ul>
-    <!-- <ul v-else class="animation_opactiy">
+    <ul v-else class="animation_opactiy">
       <li class="list_back_li" v-for="item in 10" :key="item">
         <img src="../../images/shopback.svg" class="list_back_svg">
       </li>
@@ -59,7 +61,7 @@
     <div ref="abc" style="background-color: red;"></div>
     <transition name="loading">
       <loading v-show="showLoading"></loading>
-    </transition> -->
+    </transition>
   </div>
 </template>
 <script>
@@ -89,7 +91,9 @@ export default {
     this.initData();
   },
 
-  components: {},
+  mixins: [loadMore, getImgPath],
+
+  components: { ratingStar, loading },
 
   computed: {
     ...mapState([
